@@ -504,7 +504,7 @@ export interface IAbstractGraph extends EventEmitter {
    * 收起指定的 Combo
    * @param comboId combo ID 或 combo 实例
    */
-  collapseCombo: (combo: string | ICombo) => void;
+  collapseCombo: (combo: string | ICombo, stack?: boolean) => void;
 
   /**
    * 展开指定的 Combo

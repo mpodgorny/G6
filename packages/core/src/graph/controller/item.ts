@@ -53,7 +53,7 @@ export default class ItemController {
    * @returns {(Item)}
    * @memberof ItemController
    */
-  public addItem<T extends Item>(type: ITEM_TYPE, model: ModelConfig) {
+  public addItem<T extends Item>(type: ITEM_TYPE, model: ModelConfig, stack: boolean = true) {
     const { graph } = this;
     const vType = type === VEDGE ? EDGE : type;
     const parent: IGroup = graph.get(`${vType}Group`) || graph.get('group');
@@ -187,7 +187,7 @@ export default class ItemController {
       if (model.collapsed) {
         setTimeout(() => {
           if (!item.destroyed) {
-            graph.collapseCombo(item as ICombo);
+            graph.collapseCombo(item as ICombo, stack);
             graph.updateCombo(item as ICombo);
           }
         }, 0);
@@ -429,17 +429,17 @@ export default class ItemController {
   /**
    * 收起 combo，隐藏相关元素
    */
-  public collapseCombo(combo: ICombo | string) {
+  public collapseCombo(combo: ICombo | string, stack: boolean = true) {
     const graph = this.graph;
     if (isString(combo)) {
       combo = graph.findById(combo) as ICombo;
     }
     const children = (combo as ICombo).getChildren();
     children.nodes.forEach((node) => {
-      graph.hideItem(node);
+      graph.hideItem(node, stack);
     });
     children.combos.forEach((c) => {
-      graph.hideItem(c);
+      graph.hideItem(c, stack);
     });
   }
 
@@ -695,7 +695,7 @@ export default class ItemController {
    * @param {ComboConfig[]} comboModels combos 数据
    * @memberof ItemController
    */
-  public addCombos(comboTrees: ComboTree[], comboModels: ComboConfig[]) {
+  public addCombos(comboTrees: ComboTree[], comboModels: ComboConfig[], stack: boolean = true) {
     const { graph } = this;
     (comboTrees || []).forEach((ctree: ComboTree) => {
       traverseTreeUp<ComboTree>(ctree, (child) => {
@@ -708,7 +708,7 @@ export default class ItemController {
           }
         });
         if (comboModel) {
-          this.addItem('combo', comboModel);
+          this.addItem('combo', comboModel, stack);
         }
         return true;
       });

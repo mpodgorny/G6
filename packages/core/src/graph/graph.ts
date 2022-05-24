@@ -1574,7 +1574,7 @@ export default abstract class AbstractGraph extends EventEmitter implements IAbs
     // process the data to tree structure
     if (combosData) {
       // add combos
-      self.addCombos(combosData);
+      self.addCombos(combosData, stack);
       if (!this.get('groupByTypes')) {
         this.sortCombos();
       }
@@ -1613,11 +1613,11 @@ export default abstract class AbstractGraph extends EventEmitter implements IAbs
    * 私有方法，在 render 和 changeData 的时候批量添加数据中所有平铺的 combos
    * @param {ComboConfig[]} combos 平铺的 combos 数据
    */
-  protected addCombos(combos: ComboConfig[]) {
+  protected addCombos(combos: ComboConfig[], stack: boolean = true) {
     const self = this;
     const comboTrees = self.get('comboTrees');
     const itemController: ItemController = this.get('itemController');
-    itemController.addCombos(comboTrees, combos);
+    itemController.addCombos(comboTrees, combos, stack);
   }
 
   /**
@@ -2418,7 +2418,7 @@ export default abstract class AbstractGraph extends EventEmitter implements IAbs
    * 收起指定的 combo
    * @param {string | ICombo} combo combo ID 或 combo item
    */
-  public collapseCombo(combo: string | ICombo): void {
+  public collapseCombo(combo: string | ICombo, stack: boolean = true): void {
     if (this.destroyed) return;
     if (isString(combo)) {
       combo = this.findById(combo) as ICombo;
@@ -2432,7 +2432,7 @@ export default abstract class AbstractGraph extends EventEmitter implements IAbs
     const comboModel = combo.getModel();
 
     const itemController: ItemController = this.get('itemController');
-    itemController.collapseCombo(combo);
+    itemController.collapseCombo(combo, stack);
     comboModel.collapsed = true;
 
     // add virtual edges
